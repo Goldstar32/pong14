@@ -15,7 +15,7 @@ document.body.appendChild(canvas);
 window.addEventListener("resize", () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    
+
     // Optionally clear the canvas or redraw on resize
     pen.clearRect(0, 0, canvas.width, canvas.height);
 });
@@ -40,9 +40,6 @@ import { Ball } from "./balls.js";
 // Import player class from player file
 import { Player } from "./player.js";
 
-// Array to hold multiple ball instances
-let balls = [new Ball({ xSpeed: 20, ySpeed: 5, y: (canvas.height / 2) })];
-
 // Array to hold multiple player instances
 let players = [
     new Player({
@@ -62,6 +59,15 @@ let players = [
         facing: -1
     })
 ];
+
+// Array to hold multiple ball instances
+let balls = [new Ball({
+    xSpeed: 20,
+    ySpeed: 5,
+    y: (canvas.height / 2),
+    playerLeft: players[0],
+    playerRight: players[1]
+})];
 
 function handleInput(player) {
     // Check if specific keys are currently pressed and act accordingly
@@ -118,6 +124,14 @@ function handleCollision(player, ball) {
     }
 }
 
+// Draw scores of players
+function drawScores(pen, playerLeft, playerRight, canvas) {
+    pen.font = "20px Arial";
+    pen.fillStyle = "#000000";
+    pen.fillText(`Left Player: ${playerLeft.points}`, 400, 100);
+    pen.fillText(`Right Player: ${playerRight.points}`, canvas.width - 500, 100);
+}
+
 // Function to draw
 function draw() {
     // Handle input from players
@@ -128,6 +142,9 @@ function draw() {
 
     // Clear canvas before drawing
     pen.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw scores
+    drawScores(pen, players[0], players[1], canvas);
 
     // Loop through each player and call its draw method to draw all players
     players.forEach(player => player.drawPlayer(canvas, pen));

@@ -5,7 +5,7 @@ const dragFactor = 0.0001;
 export class Ball {
 
     // Initialize parameters for ball (use deconstructors to easily pass the values I want while giving default to others)
-    constructor({ ballRadius = 20, xSpeed = 5, ySpeed = 5, x = null, y = 100, ballCol = null, mass = 1 } = {}) {
+    constructor({ ballRadius = 20, xSpeed = 5, ySpeed = 5, x = null, y = 100, ballCol = null, mass = 1, playerLeft, playerRight } = {}) {
         // Radius of ball
         this.ballRadius = ballRadius;
 
@@ -27,6 +27,10 @@ export class Ball {
 
         // Mass of ball
         this.mass = mass;
+
+        // Player instances
+        this.playerLeft = playerLeft;
+        this.playerRight = playerRight;
     }
 
     // Function for drawing the ball
@@ -73,25 +77,28 @@ export class Ball {
         // If edge of ball reaches a vertical canvas border, invert xSpeed
         if ((this.x > canvas.width - this.ballRadius) || (this.x < this.ballRadius)) {
             this.xSpeed = -this.xSpeed;
-            this.hitWall(true);
+            this.hitWall(true, canvas);
         }
 
         // If edge of ball reaches a horizontal canvas border, invert ySpeed
         if ((this.y > canvas.height - this.ballRadius) || (this.y < this.ballRadius)) {
             this.ySpeed = -this.ySpeed;
-            this.hitWall(false);
         }
     }
 
     // Perform actions when ball collides with walls
-    hitWall(isSide) {
-        this.ballCol = this.getRandCol();
-        this.changeSize(isSide);
+    hitWall(isSide, canvas) {
+        if (isSide) {
+            if (this.x < canvas.width / 2)
+                this.givePoint(this.playerRight); // -1 is facing direction of player recieving point
+            else
+                this.givePoint(this.playerLeft); // 1 is facing direction of player recieving point
+        }
     }
 
-    // Reacts to collisions with player
-    collidesWithPlayer() {
-
+    // Gives point to player
+    givePoint(player) {
+        player.points += 1;
     }
 
     // Change size of the ball
@@ -150,7 +157,7 @@ export class Ball {
     // Update acceleration based on speed of ball to simulate drag
     applyDrag() {
         // Force of drag
-        let dragForce = dragFactor * Math.pow(this.totSpeed, 3) * Math.PI * Math.pow(this.ballRadius, 2) / 1000;
+        let dragForce = dragFactor * Math.pow(this.totSpeed, 3) * Math.PI * Math.pow(this.ballRadius, 2) / 5000;
 
         // Normalize the velocity components
         if (this.totSpeed > 0) {  // Prevent division by zero
