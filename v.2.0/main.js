@@ -3,7 +3,7 @@ const canvas = document.createElement("canvas");
 
 // Set the canvas width and height to match the window's size
 canvas.width = window.innerWidth;
-canvas.height = window.innerHeight * 0.99;
+canvas.height = window.innerHeight;
 
 // Get the 2D context for drawing
 const pen = canvas.getContext("2d");
@@ -48,7 +48,8 @@ let players = [
         upKey: "w",
         downKey: "s",
         hitKey: "d",
-        facing: 1
+        facing: 1,
+        playerCol: "#1f51ff"
     }),
     new Player({
         x: (canvas.width - 10),
@@ -56,7 +57,8 @@ let players = [
         upKey: "ArrowUp",
         downKey: "ArrowDown",
         hitKey: "ArrowLeft",
-        facing: -1
+        facing: -1,
+        playerCol: "#ff5c00"
     })
 ];
 
@@ -95,9 +97,13 @@ function isCollision(player, ball) {
                 if (player.facing === 1) {
                     // Player is facing right, so check left side
                     closestX = player.x - player.width / 2;
+                    // Update which player last hit ball
+                    ball.lastHit = 1;
                 } else {
                     // Player is facing left, so check right side
                     closestX = player.x + player.width / 2;
+                    // Update which player last hit ball
+                    ball.lastHit = -1;
                 }
 
                 // Distance between ball center and closest point on player
@@ -127,9 +133,18 @@ function handleCollision(player, ball) {
 // Draw scores of players
 function drawScores(pen, playerLeft, playerRight, canvas) {
     pen.font = "20px Arial";
-    pen.fillStyle = "#000000";
+    pen.fillStyle = playerLeft.playerCol;
     pen.fillText(`Left Player: ${playerLeft.points}`, 400, 100);
+    pen.fillStyle = playerRight.playerCol;
     pen.fillText(`Right Player: ${playerRight.points}`, canvas.width - 500, 100);
+}
+
+// Draw background
+function drawBackground(pen, canvas) {
+    // Set the fill color to black
+    pen.fillStyle = "#000000";
+    // Fill the canvas with the background color
+    pen.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 // Function to draw
@@ -142,6 +157,9 @@ function draw() {
 
     // Clear canvas before drawing
     pen.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw background
+    drawBackground(pen, canvas);
 
     // Draw scores
     drawScores(pen, players[0], players[1], canvas);

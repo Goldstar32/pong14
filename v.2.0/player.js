@@ -2,7 +2,7 @@
 export class Player {
 
     // Initialize parameters for player (use deconstructors to easily pass the values I want while giving default to others)
-    constructor({ x = 10, y = 10, width = 17, height = 170, upKey = "w", downKey = "s", facing = 1, hitKey = "d" } = {}) {
+    constructor({ x = 10, y = 10, width = 17, height = 170, upKey = "w", downKey = "s", facing = 1, hitKey = "d", playerCol = "#000000" } = {}) {
         // How far from the edge the player is supposed to be
         this.edgeDist = 50;
     
@@ -34,7 +34,7 @@ export class Player {
         // Players points
         this.points = 0;
 
-        this.playerCol = "#000000";
+        this.playerCol = playerCol;
     }
 
     // Function for drawing the player
