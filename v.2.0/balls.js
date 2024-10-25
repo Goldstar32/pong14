@@ -184,7 +184,7 @@ export class Ball {
 
     // Add speed if speed is too low
     checkMinSpeed() {
-        const minSpeed = 5;
+        const minSpeed = 3;
 
         if ((this.xSpeed > 0 && this.xSpeed < minSpeed) || (this.xSpeed > -minSpeed && this.xSpeed < 0)) {
             this.xSpeed = minSpeed * Math.sign(this.xSpeed);
@@ -197,7 +197,7 @@ export class Ball {
     // Adjust the color based on the current speed
     updateColor() {
         // Normalize `totSpeed` to a range (e.g., 0-1) if `totSpeed` max is known
-        const maxSpeed = 30;
+        const maxSpeed = 25;
         const speedFactor = Math.min(1, this.totSpeed / maxSpeed);
 
         // Change color intensity from dark to bright, adjusting hex values for the desired colors
