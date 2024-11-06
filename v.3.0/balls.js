@@ -5,12 +5,12 @@ const dragFactor = 0.0001;
 export class Ball {
 
     // Initialize parameters for ball (use deconstructors to easily pass the values I want while giving default to others)
-    constructor({ ballRadius = 20, xSpeed = 5, ySpeed = 5, x = null, y = 100, ballCol = "#ffffff", mass = 1, playerLeft, playerRight } = {}) {
+    constructor({ ballRadius = 20, xSpeed = null, ySpeed = 0, x = null, y = 100, ballCol = "#ffffff", mass = 1, playerLeft, playerRight } = {}) {
         // Radius of ball
         this.ballRadius = ballRadius;
 
         // Balls speed in x and y directions
-        this.xSpeed = xSpeed;
+        this.xSpeed = xSpeed ?? 5 * this.getRandDirection();
         this.ySpeed = ySpeed;
 
         // Balls acceleration in y direction
@@ -141,6 +141,15 @@ export class Ball {
         return hex;
     }
 
+    // Return random value 1 or -1
+    getRandDirection() {
+        const rand = Math.random(); // Generate random number between 0 and 1
+        if (rand <= 0.5)
+            return 1 // If number is 0.5 or lower, return 1
+        else
+            return -1 // If number is over 0.5, return -1
+    }
+
     // Update positions
     updatePosition() {
         // Moves ball in x according to xSpeed
@@ -215,8 +224,8 @@ export class Ball {
             // Combine to form the color hex
             this.ballCol = `#1f${greenComponent}${blueComponent}`;
         } else if (this.lastHit === -1) {  // Right player (orange)
-            // Red transitions from 7f to ff (127 to 255), Green from 4f to ff (79 to 255)
-            const redComponent = Math.floor(127 + (128 * speedFactor)).toString(16).padStart(2, '0'); // No change
+            // Red transitions from af to ff (175 to 255), Green from 4f to ff (79 to 255)
+            const redComponent = Math.floor(175 + (128 * speedFactor)).toString(16).padStart(2, '0'); // No change
             const greenComponent = Math.floor(79 + (176 * speedFactor)).toString(16).padStart(2, '0'); // Adjusted range
 
             // Combine to form the color hex

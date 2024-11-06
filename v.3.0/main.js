@@ -20,6 +20,9 @@ window.addEventListener("resize", () => {
     pen.clearRect(0, 0, canvas.width, canvas.height);
 });
 
+// Variable to end game when someone wins
+let winner = false;
+
 // Keep track of and update what keys are pressed
 // Store the state of keys (whether they are pressed or not)
 const keys = {};
@@ -64,8 +67,8 @@ let players = [
 
 // Array to hold multiple ball instances
 let balls = [new Ball({
-    xSpeed: 20,
-    ySpeed: 5,
+    ySpeed: 0,
+    x: (canvas.width / 2),
     y: (canvas.height / 2),
     playerLeft: players[0],
     playerRight: players[1]
@@ -82,9 +85,6 @@ function handleInput(player) {
     if (keys[player.hitKey]) {
         player.tryHit(); // Tries to perform a "hit"
     }
-
-    // Check if player has won
-    checkForWin(player);
 }
 
 // Checks collision between ball and player
@@ -144,15 +144,13 @@ function handleCollision(player, ball) {
     }
 }
 
-// Checks if player has won (has 14 points)
-function checkForWin(player){
+// Checks if any player has won (has 14 points)
+function checkForWin(player) {
     if (player.points === 14) { // If player has 14 points...
-        if (player.facing === 1) {// Check if player is facing right (1) or left (-1)
-            alert("Blue player wins!");
-        }
-        else {
-            alert("Orange player wins!");
-        }
+        drawWinText(pen, canvas, player) // Draw text displaying winner
+        winner = true;
+        // Unhide "back to title" button
+        document.getElementById("returnButton").hidden = false;
     }
 }
 
@@ -173,6 +171,18 @@ function drawBackground(pen, canvas) {
     pen.fillRect(0, 0, canvas.width, canvas.height);
 }
 
+// Draw winner text
+function drawWinText(pen, canvas, player) {
+    pen.font = "5vw Arial";
+    pen.fillStyle = player.playerCol;
+    if (player.facing === 1) {// Check if player is facing right (1) or left (-1)
+        pen.fillText("Blue player won!", (7 / 22) * canvas.width, canvas.height / 3);
+    }
+    else {
+        pen.fillText("Orange player won!", (2 / 7) * canvas.width, canvas.height / 3);
+    }
+}
+
 // Function to draw
 function draw() {
     // Handle input from players
@@ -187,9 +197,6 @@ function draw() {
     // Draw background
     drawBackground(pen, canvas);
 
-    // Draw scores
-    drawScores(pen, players[0], players[1], canvas);
-
     // Loop through each player and call its draw method to draw all players
     players.forEach(player => player.drawPlayer(canvas, pen));
 
@@ -198,9 +205,20 @@ function draw() {
     // Loop through each ball and call its draw method to draw all balls
     balls.forEach(ball => ball.drawBall(canvas, pen));
 
-    // Call the function recursively to update animation
-    requestAnimationFrame(draw);
+    // Draw scores
+    drawScores(pen, players[0], players[1], canvas);
+
+    // Checks if anyone has won
+    if (players.forEach(player => checkForWin(player)));
+
+    // Call the function recursively to update animation unless someone has won
+    if (!winner) {
+        requestAnimationFrame(draw);
+    }
 }
+
+// Hide "back to title" button
+document.getElementById("returnButton").hidden = true;
 
 // Call the function to start the animation
 draw();
